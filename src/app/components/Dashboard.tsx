@@ -21,6 +21,8 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import RecomendacionesIA from './RecomendacionesIA'
+import type { DatosEstudiante } from '../../lib/gemini'
 
 export default function Dashboard() {
   const [selectedMateria, setSelectedMateria] = useState('')
@@ -406,6 +408,30 @@ export default function Dashboard() {
           <p className="text-sm opacity-90 mt-1">Con tus sesiones registradas</p>
         </div>
       </div>
+
+      {/* ── Recomendaciones con IA ── */}
+      <RecomendacionesIA
+        datos={{
+          nombre: perfil?.nombre || 'Estudiante',
+          nivel: perfil?.nivel || 1,
+          xp: perfil?.xp || 0,
+          racha: perfil?.racha || 0,
+          tipoAprendizaje: perfil?.tipo_aprendizaje || 'no definido',
+          totalMinutos,
+          tasaExito,
+          materias: materias.map((m: any) => m.nombre),
+          flashcardsTotal: flashcards.length,
+          examenesTotal: examenes.length,
+          areasFuertes: timePerSubject
+            .sort((a, b) => b.hours - a.hours)
+            .slice(0, 2)
+            .map(m => m.name),
+          areasDebiles: timePerSubject
+            .sort((a, b) => a.hours - b.hours)
+            .slice(0, 2)
+            .map(m => m.name),
+        } as DatosEstudiante}
+      />
     </div>
   )
 }
