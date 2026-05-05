@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import LoadingBrain from './LoadingBrain';
 
 interface LoginProps {
   onLogin: () => void;
@@ -73,6 +74,14 @@ export default function Login({ onLogin }: LoginProps) {
     setMensaje('Cuenta creada. Ahora inicia sesión.');
     setModoRegistro(false);
     setPassword('');
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-pink-100 p-6">
+        <LoadingBrain mensaje={modoRegistro ? 'Creando tu cuenta...' : 'Iniciando sesión...'} />
+      </div>
+    )
   }
 
   return (

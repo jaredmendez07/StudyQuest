@@ -10,6 +10,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import LoadingBrain from './LoadingBrain';
 
 interface Exam {
   id: string;
@@ -432,7 +433,7 @@ export default function Examenes() {
   const progress25 = (studySeconds / (25 * 60)) * 100;
 
   if (loading) {
-    return <p>Cargando exámenes...</p>;
+    return <LoadingBrain mensaje="Cargando exámenes..." />;
   }
 
   if (view === 'editor' && exam) {

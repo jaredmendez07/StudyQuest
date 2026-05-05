@@ -21,6 +21,30 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import RecomendacionesIA from './RecomendacionesIA'
+import type { DatosEstudiante } from '../../lib/gemini'
+import LoadingBrain from './LoadingBrain'
+
+// Calcula racha de días consecutivos desde sesiones_estudio
+function calcularRacha(sesiones: any[]): number {
+  if (!sesiones.length) return 0
+  const diasUnicos = Array.from(new Set(
+    sesiones.map((s) => {
+      const f = new Date(s.fecha || s.created_at)
+      return new Date(f.getFullYear(), f.getMonth(), f.getDate()).getTime()
+    }).filter(Boolean)
+  )).sort((a, b) => b - a)
+  const hoy = new Date()
+  const hoyMs = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate()).getTime()
+  const ayerMs = hoyMs - 86400000
+  if (diasUnicos[0] < ayerMs) return 0
+  let racha = 1
+  for (let i = 1; i < diasUnicos.length; i++) {
+    if (diasUnicos[i - 1] - diasUnicos[i] === 86400000) racha++
+    else break
+  }
+  return racha
+}
 
 export default function Dashboard() {
   const [selectedMateria, setSelectedMateria] = useState('')
@@ -81,7 +105,12 @@ export default function Dashboard() {
       .select('*')
       .eq('usuario_id', user.id)
 
-    setPerfil(perfilData)
+    // Calcular racha real y sincronizar con Supabase
+    const rachaCalculada = calcularRacha(sesionesData || [])
+    if (rachaCalculada !== (perfilData?.racha ?? 0)) {
+      await supabase.from('perfiles').update({ racha: rachaCalculada }).eq('id', user.id)
+    }
+    setPerfil(perfilData ? { ...perfilData, racha: rachaCalculada } : null)
     setSesiones(sesionesData || [])
     setMaterias(materiasData || [])
     setFlashcards(flashcardsData || [])
@@ -139,7 +168,7 @@ export default function Dashboard() {
   }
 
   if (loading) {
-    return <p>Cargando dashboard...</p>
+    return <LoadingBrain mensaje="Cargando dashboard..." />
   }
 
   const xp = perfil?.xp || 0
@@ -406,6 +435,30 @@ export default function Dashboard() {
           <p className="text-sm opacity-90 mt-1">Con tus sesiones registradas</p>
         </div>
       </div>
+
+      {/* ── Recomendaciones con IA ── */}
+      <RecomendacionesIA
+        datos={{
+          nombre: perfil?.nombre || 'Estudiante',
+          nivel: perfil?.nivel || 1,
+          xp: perfil?.xp || 0,
+          racha: perfil?.racha || 0,
+          tipoAprendizaje: perfil?.tipo_aprendizaje || 'no definido',
+          totalMinutos,
+          tasaExito,
+          materias: materias.map((m: any) => m.nombre),
+          flashcardsTotal: flashcards.length,
+          examenesTotal: examenes.length,
+          areasFuertes: timePerSubject
+            .sort((a, b) => b.hours - a.hours)
+            .slice(0, 2)
+            .map(m => m.name),
+          areasDebiles: timePerSubject
+            .sort((a, b) => a.hours - b.hours)
+            .slice(0, 2)
+            .map(m => m.name),
+        } as DatosEstudiante}
+      />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Book, Plus, Trash2, Edit2, BarChart3 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import LoadingBrain from './LoadingBrain';
 
 interface Materia {
   id: string;
@@ -162,7 +163,7 @@ export default function Materias() {
   }
 
   if (loading) {
-    return <p>Cargando materias...</p>;
+    return <LoadingBrain mensaje="Cargando materias..." />;
   }
 
   return (
