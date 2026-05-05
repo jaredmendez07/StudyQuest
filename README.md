@@ -1,5 +1,7 @@
-Este branch incluye modificaciones en las pantallas de cargas de cada dashboard para un mejor estilo y diseño mientras esperas que cargue una panalla que se haya seleccionado, ademas se trabajo en  el apartado de Rachas de dias que se encuentra en la pantalla principal de la aplicacion. 
-
+  ## Ojito piojito
+  En este branch se agrego la funcionalidad de gemini para dar recomendaciones al usuario en base a sus datos.
+  Ademas se actualizo la interfaz del login para que se vea mas aca. Eso es todo amigos
+  
   ## Running the code
 
   Run `npm i` to install the dependencies.
