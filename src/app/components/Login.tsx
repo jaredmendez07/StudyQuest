@@ -94,7 +94,7 @@ export default function Login({ onLogin }: LoginProps) {
 >
       <div className="w-full max-w-md rounded-2xl shadow-xl border-12 border-purple-400/20 p-8 backdrop-blur-md bg-white/3">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-purple-700">StudyQuest</h1>
+          <h1 className="text-4xl font-bold text-white">StudyQuest</h1>
           <b className="text-white mt-2">
             {modoRegistro ? 'Crea tu cuenta para comenzar' : 'Inicia sesión para continuar'}
           </b>
