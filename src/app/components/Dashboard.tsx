@@ -38,11 +38,16 @@ export default function Dashboard() {
   const [fuegoAnimacion, setFuegoAnimacion] = useState(false)
 
   const frasesMotivacionales = [
-    'Cada día que estudias subes de nivel. 🔥',
+    'Ponte al tiro que ese cerebro quiere crecer. 🔥',
+    'Fundamentos de la investigación < Ecuaciones diferenciales. 🤓',
+    '"Cuéntamelo y lo olvidaré.  Enséñamelo y quizás lo recordaré. Hazme partícipe y lo aprenderé." — Benjamin Franklin',
+    'Pequeños avances crean grandes resultados. ⭐',
     'Tu cerebro se fortalece con cada sesión. 🧠',
-    'No pares: una racha larga empieza con un día. 💪',
-    'Estudiar hoy te acerca a tu meta. 🚀',
-    'Pequeños avances crean grandes resultados. ⭐'
+    'Also try Minecraft!!.',
+    'Also try Terraria!!.',
+    'Quien es Duolingo???.',
+    'Cada día más guapo, inteligente y concentrado. Te felicito!!!. 👏',
+    'Eres una fiera, maquina, bestia parda, mastodonte, crack, exitoso, leyenda, papu, genio, genia, genie, compañere, camarada, bro, bestie, amigo, amigue....'
   ]
 
   useEffect(() => {
@@ -309,7 +314,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Bienvenido de vuelta, ¡sigue así!</p>
+          <p className="text-gray-600 mt-1">Bienvenido, ¡sigue así!</p>
         </div>
       </div>
 
@@ -327,11 +332,11 @@ export default function Dashboard() {
             <div className="flex-1 w-full">
               <div className="relative bg-white rounded-2xl border-2 border-purple-200 p-5 shadow-md">
                 <div className="absolute -left-3 top-10 w-6 h-6 bg-white border-l-2 border-b-2 border-purple-200 rotate-45 hidden lg:block" />
-                <p className="text-sm font-bold text-purple-600 mb-1">Consejo del cerebro</p>
+                <p className="text-sm font-bold text-purple-600 mb-1">Frases para pensar...</p>
                 <p className="text-xl font-bold text-gray-900 min-h-[56px]">
                   {frasesMotivacionales[fraseIndex]}
                 </p>
-                <p className="text-gray-500 text-sm mt-2">La frase cambia automáticamente cada pocos segundos.</p>
+                <p className="text-gray-500 text-sm mt-2">Este es bebote el cerebro familiarizate con el!!!.</p>
               </div>
             </div>
           </div>
