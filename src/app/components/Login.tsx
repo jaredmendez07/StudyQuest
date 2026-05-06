@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import LoadingBrain from './LoadingBrain';
 
 interface LoginProps {
   onLogin: () => void;
@@ -75,53 +76,74 @@ export default function Login({ onLogin }: LoginProps) {
     setPassword('');
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-pink-100 p-6">
+        <LoadingBrain mensaje={modoRegistro ? 'Creando tu cuenta...' : 'Iniciando sesión...'} />
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-white to-pink-100 p-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
+         <div
+           className="min-h-screen flex items-center justify-center p-6"
+          style={{
+            backgroundImage: 'url("/fondologin.gif")',
+             backgroundSize: 'cover',
+              backgroundPosition: 'center'}}
+>
+      <div className="w-full max-w-md rounded-2xl shadow-xl border-12 border-purple-400/20 p-8 backdrop-blur-md bg-white/3">
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-purple-700">StudyQuest</h1>
-          <p className="text-gray-500 mt-2">
+          <b className="text-white mt-2">
             {modoRegistro ? 'Crea tu cuenta para comenzar' : 'Inicia sesión para continuar'}
-          </p>
+          </b>
+          <p className="text-white text-sm mt-1 italic">
+          "Cualquiera que pare de aprender se hace viejo, ya tenga veinte u ochenta años. Cualquiera que siga aprendiendo se mantiene joven." 
+          - Henry Ford
+       </p>
         </div>
 
         <div className="space-y-4">
           {modoRegistro && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-white mb-2">
                 Nombre
               </label>
               <input
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 
+                text-white placeholder-white/50 bg-transparent"
                 placeholder="Tu nombre"
               />
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Correo
             </label>
             <input
               value={email}
               type="email"
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 
+              text-white placeholder-white/50 bg-transparent"
               placeholder="correo@ejemplo.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-white mb-2">
               Contraseña
             </label>
             <input
               value={password}
               type="password"
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500 
+              text-white placeholder-white/50 bg-transparent"
               placeholder="********"
             />
           </div>

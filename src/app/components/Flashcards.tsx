@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Layers, Plus, Play, Edit, Trash2, RotateCw, Clock } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import LoadingBrain from './LoadingBrain';
 
 interface Deck {
   id: string;
@@ -348,7 +349,7 @@ export default function Flashcards() {
   const progress25 = (studySeconds / (25 * 60)) * 100;
 
   if (loading) {
-    return <p>Cargando flashcards...</p>;
+    return <LoadingBrain mensaje="Cargando flashcards..." />;
   }
 
   if (view === 'study' && currentDeck) {
