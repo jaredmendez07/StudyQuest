@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   BarChart,
   Bar,
@@ -21,6 +21,7 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import cerebroEstudio from '../../assets/cerebro-estudio.png'
 
 export default function Dashboard() {
   const [selectedMateria, setSelectedMateria] = useState('')
@@ -33,9 +34,27 @@ export default function Dashboard() {
   const [resultados, setResultados] = useState<any[]>([])
   const [mensaje, setMensaje] = useState('')
   const [loading, setLoading] = useState(true)
+  const [fraseIndex, setFraseIndex] = useState(0)
+  const [fuegoAnimacion, setFuegoAnimacion] = useState(false)
+
+  const frasesMotivacionales = [
+    'Cada día que estudias subes de nivel. 🔥',
+    'Tu cerebro se fortalece con cada sesión. 🧠',
+    'No pares: una racha larga empieza con un día. 💪',
+    'Estudiar hoy te acerca a tu meta. 🚀',
+    'Pequeños avances crean grandes resultados. ⭐'
+  ]
 
   useEffect(() => {
     cargarDatos()
+  }, [])
+
+  useEffect(() => {
+    const intervalo = window.setInterval(() => {
+      setFraseIndex((actual) => (actual + 1) % frasesMotivacionales.length)
+    }, 4500)
+
+    return () => window.clearInterval(intervalo)
   }, [])
 
   async function cargarDatos() {
@@ -138,6 +157,87 @@ export default function Dashboard() {
     await cargarDatos()
   }
 
+  const fechasEstudiadas = useMemo(() => {
+    const fechas = new Set<string>()
+
+    sesiones.forEach((sesion) => {
+      const fechaBase = sesion.fecha || sesion.created_at
+      if (!fechaBase) return
+
+      const fecha = new Date(fechaBase)
+      if (Number.isNaN(fecha.getTime())) return
+
+      fechas.add(fecha.toISOString().slice(0, 10))
+    })
+
+    return fechas
+  }, [sesiones])
+
+  function fechaLocalISO(fecha: Date) {
+    const copia = new Date(fecha)
+    copia.setMinutes(copia.getMinutes() - copia.getTimezoneOffset())
+    return copia.toISOString().slice(0, 10)
+  }
+
+  const rachaCalculada = useMemo(() => {
+    if (fechasEstudiadas.size === 0) return 0
+
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+
+    const ayer = new Date(hoy)
+    ayer.setDate(ayer.getDate() - 1)
+
+    let cursor = fechasEstudiadas.has(fechaLocalISO(hoy)) ? hoy : ayer
+    let racha = 0
+
+    while (fechasEstudiadas.has(fechaLocalISO(cursor))) {
+      racha++
+      cursor.setDate(cursor.getDate() - 1)
+    }
+
+    return racha
+  }, [fechasEstudiadas])
+
+  useEffect(() => {
+    if (rachaCalculada > 0) {
+      setFuegoAnimacion(true)
+      const timer = window.setTimeout(() => setFuegoAnimacion(false), 1500)
+      return () => window.clearTimeout(timer)
+    }
+  }, [rachaCalculada])
+
+  const diasCalendario = useMemo(() => {
+    const hoy = new Date()
+    const year = hoy.getFullYear()
+    const month = hoy.getMonth()
+    const primerDia = new Date(year, month, 1)
+    const ultimoDia = new Date(year, month + 1, 0)
+    const espaciosInicio = primerDia.getDay() === 0 ? 6 : primerDia.getDay() - 1
+    const dias = []
+
+    for (let i = 0; i < espaciosInicio; i++) {
+      dias.push({ dia: '', estudiado: false, hoy: false })
+    }
+
+    for (let dia = 1; dia <= ultimoDia.getDate(); dia++) {
+      const fecha = new Date(year, month, dia)
+      const iso = fechaLocalISO(fecha)
+      dias.push({
+        dia: String(dia),
+        estudiado: fechasEstudiadas.has(iso),
+        hoy: iso === fechaLocalISO(hoy)
+      })
+    }
+
+    return dias
+  }, [fechasEstudiadas])
+
+  const mesActual = new Intl.DateTimeFormat('es-MX', {
+    month: 'long',
+    year: 'numeric'
+  }).format(new Date())
+
   if (loading) {
     return <p>Cargando dashboard...</p>
   }
@@ -203,12 +303,73 @@ export default function Dashboard() {
 
   const COLORS = ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6']
 
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
           <p className="text-gray-600 mt-1">Bienvenido de vuelta, ¡sigue así!</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <div className="xl:col-span-2 bg-gradient-to-br from-violet-50 via-white to-orange-50 rounded-2xl p-6 border-2 border-purple-100 shadow-sm">
+          <div className="flex flex-col lg:flex-row items-center gap-6">
+            <div className="relative shrink-0">
+              <img
+                src={cerebroEstudio}
+                alt="Cerebro motivacional"
+                className="w-40 h-40 object-contain drop-shadow-lg animate-brain-float"
+              />
+            </div>
+
+            <div className="flex-1 w-full">
+              <div className="relative bg-white rounded-2xl border-2 border-purple-200 p-5 shadow-md">
+                <div className="absolute -left-3 top-10 w-6 h-6 bg-white border-l-2 border-b-2 border-purple-200 rotate-45 hidden lg:block" />
+                <p className="text-sm font-bold text-purple-600 mb-1">Consejo del cerebro</p>
+                <p className="text-xl font-bold text-gray-900 min-h-[56px]">
+                  {frasesMotivacionales[fraseIndex]}
+                </p>
+                <p className="text-gray-500 text-sm mt-2">La frase cambia automáticamente cada pocos segundos.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl p-6 border-2 border-orange-100 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-gray-600 text-sm">Racha de estudio</p>
+              <p className="text-3xl font-bold text-gray-900">{rachaCalculada} días</p>
+            </div>
+            <div className={`text-5xl ${fuegoAnimacion ? 'animate-fire-pop' : 'animate-pulse'}`}>🔥</div>
+          </div>
+
+          <p className="text-sm font-semibold text-gray-700 capitalize mb-3">{mesActual}</p>
+          <div className="grid grid-cols-7 gap-1 text-center text-xs font-bold text-gray-500 mb-2">
+            {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((dia) => (
+              <span key={dia}>{dia}</span>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1">
+            {diasCalendario.map((item, index) => (
+              <div
+                key={`${item.dia}-${index}`}
+                className={`h-9 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+                  item.dia === ''
+                    ? 'bg-transparent'
+                    : item.estudiado
+                      ? 'bg-orange-100 text-orange-700 ring-2 ring-orange-300'
+                      : item.hoy
+                        ? 'bg-purple-100 text-purple-700'
+                        : 'bg-gray-100 text-gray-500'
+                }`}
+              >
+                {item.estudiado ? '🔥' : item.dia}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -239,7 +400,7 @@ export default function Dashboard() {
             <div>
               <p className="text-gray-600 text-sm">Racha Actual</p>
               <p className="text-3xl font-bold text-gray-900 mt-1">
-                {perfil?.racha || 0} días
+                {rachaCalculada} días
               </p>
             </div>
             <div className="bg-orange-100 p-3 rounded-lg">
