@@ -62,6 +62,7 @@ export default function Dashboard() {
   const [fuegoAnimacion, setFuegoAnimacion] = useState(false)
 
   const frasesMotivacionales = [
+    'Recuerda que puedes solicitar recomendaciones personalizadas en la sección de IA. 🤖',
     'Ponte al tiro que ese cerebro quiere crecer. 🔥',
     'Fundamentos de la investigación < Ecuaciones diferenciales. 🤓',
     '"Cuéntamelo y lo olvidaré.  Enséñamelo y quizás lo recordaré. Hazme partícipe y lo aprenderé." — Benjamin Franklin',
